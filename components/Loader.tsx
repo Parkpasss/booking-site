@@ -1,4 +1,4 @@
-import cn from 'classnames'
+import cn from 'classnames';
 
 export function Loader({ className }: { className?: string }) {
   return (
@@ -7,7 +7,7 @@ export function Loader({ className }: { className?: string }) {
       <div className="w-2 h-2 rounded-full bg-gray-500 animate-ping" />
       <div className="w-2 h-2 rounded-full bg-gray-500 animate-ping" />
     </div>
-  )
+  );
 }
 
 export function LoaderGrid({ className }: { className?: string }) {
@@ -23,5 +23,13 @@ export function LoaderGrid({ className }: { className?: string }) {
         />
       ))}
     </>
-  )
+  );
+}
+
+export function FullPageLoad() {
+  return (
+    <div className="fixed w-full inset-x-0 h-screen bg-black/60 z-50 flex flex-col justify-center top-0">
+      <div className="animate-spin w-10 h-10 rounded-full text-gray-400 border-[4px] border-t-transparent border-current m-auto" />
+    </div>
+  );
 }

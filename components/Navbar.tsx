@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { MdBedtime } from 'react-icons/md'
+import { GiNightSleep } from 'react-icons/gi'
 import { RxDividerVertical } from 'react-icons/rx'
 import { AiOutlineSearch } from 'react-icons/ai'
 
@@ -43,7 +43,7 @@ export default function Navbar() {
       )}
     >
       <div className="grow basis-0 hidden font-semibold text-lg sm:text-xl text-lime-500 cursor-pointer sm:flex sm:gap-2">
-        <MdBedtime className="text-4xl my-auto" />
+        <GiNightSleep className="text-4xl my-auto" />
         <Link href="/" className="my-auto block">
           COMMA
         </Link>

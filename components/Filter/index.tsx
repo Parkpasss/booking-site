@@ -37,9 +37,9 @@ const LocationFilter = () => {
               key={value}
               type="button"
               className={cn(
-                'border rounded-lg px-5 py-2.5 hover:bg-gray-200 focus:bg-rose-500',
+                'border rounded-lg px-5 py-2.5 hover:bg-gray-200 focus:bg-lime-500',
                 {
-                  'bg-rose-600 text-white': filterValue.location === value,
+                  'bg-lime-600 text-white': filterValue.location === value,
                 },
               )}
               onClick={() => {
@@ -77,6 +77,8 @@ const CheckInFilter = () => {
       isShow={detailFilter === 'checkIn'}
     >
       <Calendar
+        next2Label={null}
+        prev2Label={null}
         className="mt-8 mx-auto"
         onChange={onChange}
         minDate={new Date()}
@@ -107,6 +109,8 @@ const CheckOutFilter = () => {
       isShow={detailFilter === 'checkOut'}
     >
       <Calendar
+        next2Label={null}
+        prev2Label={null}
         className="mt-8 mx-auto"
         onChange={onChange}
         minDate={

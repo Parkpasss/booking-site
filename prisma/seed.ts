@@ -157,7 +157,7 @@ async function seedFaqs() {
 async function main() {
   // await seedUsers()
   await seedRooms()
-  //await seedFaqs()
+  // await seedFaqs()
 }
 
 main()

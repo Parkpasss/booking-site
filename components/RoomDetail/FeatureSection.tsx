@@ -193,7 +193,7 @@ export default function FeatureSection({ data }: { data: RoomType }) {
         <div className="py-8 px-4 border-b border-gray-300 leading-8 text-gray-800">
           <h1 className="font-semibold text-xl mb-2">후기</h1>
           <div className="mt-4 rounded-lg p-5 border border-gray-300">
-            후기가 들어갑니다
+            후기 기능 삽입 예정
           </div>
         </div>
       </div>

@@ -56,7 +56,7 @@ model User {
   phone       String?
   address     String?
   rooms       Room[]
-  account     Account[]
+  accounts     Account[]
   sessions    Session[]
 }
 

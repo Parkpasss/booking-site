@@ -20,7 +20,7 @@ export default async function RoomPage({ params }: ParamsProps) {
 async function getData(id: string) {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/rooms?id=${id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/rooms?id=${id}`,
       {
         next: {
           revalidate: 60 * 60,

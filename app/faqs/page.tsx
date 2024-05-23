@@ -24,7 +24,7 @@ export default async function FaqPage() {
 
 async function getData() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/faqs`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/faqs`, {
       cache: 'force-cache',
     })
 

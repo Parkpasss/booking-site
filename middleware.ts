@@ -8,5 +8,6 @@ export const config = {
     '/users/likes',
     '/users/comments',
     '/users/bookings/:path*',
+    '/rooms/register/:path',
   ],
 }

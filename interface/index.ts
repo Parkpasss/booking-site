@@ -50,6 +50,7 @@ export interface CommentApiType {
 export interface RoomType {
   id: number
   images: string[]
+  imageKeys?: string[]
   title: string
   address: string
   desc?: string
@@ -73,6 +74,8 @@ export interface RoomType {
   likes?: LikeType[]
   comments?: CommentType[]
   bookings?: BookingType[]
+  createdAt?: string
+  updatedAt?: string
 }
 
 interface Account {
@@ -139,6 +142,7 @@ export interface BookingType {
 
 export interface RoomFormType {
   images?: string[]
+  imageKeys?: string[]
   title?: string
   address?: string
   desc?: string

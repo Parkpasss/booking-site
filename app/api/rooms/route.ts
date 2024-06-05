@@ -8,8 +8,10 @@ import axios from 'axios'
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const page = searchParams.get('page') as string
-  const limit = searchParams.get('limit') as string
+  const limit = (searchParams.get('limit') as string) || '10'
   const id = searchParams.get('id') as string
+  // 내가 만든 숙소만 가져오기
+  const my = searchParams.get('my') as string
 
   const session = await getServerSession(authOptions)
 
@@ -30,6 +32,44 @@ export async function GET(req: Request) {
     return NextResponse.json(room, {
       status: 200,
     })
+  } else if (my) {
+    //내가 등록한 숙소 무한 스크롤
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: 'unauthorized user' },
+        {
+          status: 401,
+        },
+      )
+    }
+
+    const count = await prisma.room.count({
+      where: {
+        userId: session?.user?.id,
+      },
+    })
+    const skipPage = parseInt(page) - 1
+
+    const rooms = await prisma.room.findMany({
+      orderBy: { createdAt: 'desc' },
+      where: {
+        userId: session?.user.id,
+      },
+      take: parseInt(limit),
+      skip: skipPage * parseInt(limit),
+    })
+
+    return NextResponse.json(
+      {
+        page: parseInt(page),
+        data: rooms,
+        totalCount: count,
+        totalPage: Math.ceil(count / parseInt(limit)),
+      },
+      {
+        status: 200,
+      },
+    )
   } else if (page) {
     //무한 스크롤
     const count = await prisma.room.count()
@@ -91,4 +131,67 @@ export async function POST(req: Request) {
   })
 
   return NextResponse.json(result, { status: 200 })
+}
+
+export async function PATCH(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const id = searchParams.get('id') as string
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user) {
+    return NextResponse.json({ error: 'unauthorized user' }, { status: 401 })
+  }
+
+  // 데이터 수정을 처리
+  const formData = await req.json()
+  const headers = {
+    Authorization: `KakaoAK ${process.env.KAKAO_CLIENT_ID}`,
+  }
+
+  const { data } = await axios.get(
+    `https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURI(
+      formData.address,
+    )}`,
+    {
+      headers,
+    },
+  )
+
+  const result = await prisma.room.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      ...formData,
+      price: parseInt(formData.price),
+      userId: session?.user?.id,
+      lat: data.documents[0].y,
+      lng: data.documents[0].x,
+    },
+  })
+
+  return NextResponse.json(result, { status: 200 })
+}
+
+export async function DELETE(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const id = searchParams.get('id') as string
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user) {
+    return NextResponse.json({ error: 'unauthorized user' }, { status: 401 })
+  }
+
+  // 데이터 삭제
+  if (id) {
+    const result = await prisma.room.delete({
+      where: {
+        id: parseInt(id),
+      },
+    })
+
+    return NextResponse.json(result, { status: 200 })
+  }
+
+  return NextResponse.json(null, { status: 500 })
 }

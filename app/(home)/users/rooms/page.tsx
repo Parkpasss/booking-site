@@ -13,18 +13,26 @@ import { useInfiniteQuery } from 'react-query'
 import { storage } from '@/utils/firebaseApp'
 import { ref, getDownloadURL, deleteObject } from 'firebase/storage'
 import { toast } from 'react-hot-toast'
+import { useRecoilValue } from 'recoil'
+import { searchState } from '@/atom'
 
 export default function UserRooms() {
   const observerRef = useRef<HTMLDivElement | null>(null)
   const pageRef = useIntersectionObserver(observerRef, {})
   const isPageEnd = !!pageRef?.isIntersecting
   const { data: session } = useSession()
+  const searchStateValue = useRecoilValue(searchState)
+
+  const searchParams = {
+    q: searchStateValue.q,
+  }
 
   const fetchMyRooms = async ({ pageParam = 1 }) => {
     const { data } = await axios('/api/rooms?my=true&page=' + pageParam, {
       params: {
         limit: 12,
         page: pageParam,
+        ...searchParams,
       },
     })
 
@@ -39,10 +47,14 @@ export default function UserRooms() {
     isFetchingNextPage,
     fetchNextPage,
     refetch,
-  } = useInfiniteQuery(`rooms-user-${session?.user.id}`, fetchMyRooms, {
-    getNextPageParam: (lastPage) =>
-      lastPage?.data.length > 0 ? lastPage.page + 1 : undefined,
-  })
+  } = useInfiniteQuery(
+    [`rooms-user-${session?.user.id}`, searchParams],
+    fetchMyRooms,
+    {
+      getNextPageParam: (lastPage) =>
+        lastPage?.data.length > 0 ? lastPage.page + 1 : undefined,
+    },
+  )
 
   async function deleteImages(imageKeys: string[] | null) {
     if (imageKeys) {
@@ -97,7 +109,7 @@ export default function UserRooms() {
   }
 
   return (
-    <div className="mt-10 mb-40 max-w-7xl mx-auto overflow-auto">
+    <div className="mt-10 mb-40 max-w-7xl mx-auto overflow-auto px-8">
       <h1 className="mb-10 text-lg md:text-2xl font-semibold">
         나의 숙소 관리
       </h1>

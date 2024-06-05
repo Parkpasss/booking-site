@@ -9,6 +9,6 @@ export const config = {
     '/users/comments',
     '/users/bookings/:path*',
     '/rooms/register/:path',
-    'users/rooms',
+    '/users/rooms',
   ],
 }

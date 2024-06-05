@@ -36,7 +36,7 @@ export default function RoomRegisterImage() {
 
   const onSubmit = async (data: RoomImageProps) => {
     // roomForm API 생성을 요청
-    // 생성 후에는 resetRoomForm으로 recoil 초기화
+    // 생성 후에는 resetRoomForm으로 리코일 초기화
     // 내가 등록한 숙소 리스트로 돌아가도록 라우팅
     try {
       const result = await axios.post('/api/rooms', {

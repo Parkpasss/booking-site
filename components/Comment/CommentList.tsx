@@ -4,6 +4,7 @@ import { BiChevronRight } from 'react-icons/bi'
 import CommentListModal from './CommentListModal'
 import { CommentApiType } from '@/interface'
 import { Loader } from '../Loader'
+import Image from 'next/image'
 
 import dayjs from 'dayjs'
 import 'dayjs/locale/ko'
@@ -39,7 +40,7 @@ export default function CommentList({
           comments?.data?.map((comment) => (
             <div key={comment?.id} className="flex flex-col gap-2">
               <div className="flex gap-2 items-center">
-                <img
+                <Image
                   src={comment?.user?.image || '/images/user-icon.png'}
                   alt="profile img"
                   width={50}

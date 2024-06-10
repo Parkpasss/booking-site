@@ -21,6 +21,7 @@ import {
 } from 'firebase/storage'
 import { storage } from '@/utils/firebaseApp'
 import { useSession } from 'next-auth/react'
+import Image from 'next/image'
 
 interface RoomImageProps {
   images?: string[]
@@ -30,7 +31,6 @@ export default function RoomRegisterImage() {
   const router = useRouter()
   const { data: session } = useSession()
   const [roomForm, setRoomForm] = useRecoilState(roomFormState)
-  // FileReader로 읽은 이미지 객체들
   const [images, setImages] = useState<string[] | null>(null)
   const [disableSubmit, setDisableSubmit] = useState<boolean>(false)
   const resetRoomForm = useResetRecoilState(roomFormState)
@@ -72,14 +72,11 @@ export default function RoomRegisterImage() {
     if (!images) return
 
     for (const imageFile of images) {
-      //참조 만들기
       const imageKey = uuidv4()
       const imageRef = ref(storage, `${session?.user?.id}/${imageKey}`)
       imageKeys.push(imageKey)
       try {
-        //uploadString으로 firebase에 이미지 업로드하기
         const data = await uploadString(imageRef, imageFile, 'data_url')
-        //downloadURL로 업로드된 이미지 주소 가져오기
         const imageUrl = await getDownloadURL(data.ref)
         uploadedImageUrls.push(imageUrl)
       } catch (error) {
@@ -104,9 +101,6 @@ export default function RoomRegisterImage() {
   }
 
   const onSubmit = async (data: RoomImageProps) => {
-    // roomForm API 생성을 요청
-    // 생성 후에는 resetRoomForm으로 리코일 초기화
-    // 내가 등록한 숙소 리스트로 돌아가도록 라우팅
     try {
       setDisableSubmit(true)
       uploadImages(images)
@@ -186,7 +180,7 @@ export default function RoomRegisterImage() {
         <div className="mt-10 max-w-lg mx-auto flex flex-wrap gap-4">
           {images &&
             images?.map((image, index) => (
-              <img
+              <Image
                 key={index}
                 src={image}
                 alt="미리보기"

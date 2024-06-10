@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import AddressSearch from './AddressSearch'
 import { v4 as uuidv4 } from 'uuid'
+import Image from 'next/image'
 
 import cn from 'classnames'
 import { AiFillCamera } from 'react-icons/ai'
@@ -311,7 +312,7 @@ export default function RoomEditForm({ data }: { data: RoomType }) {
       <div className="mt-10 max-w-lg mx-auto flex flex-wrap gap-4">
         {images &&
           images?.map((image, index) => (
-            <img
+            <Image
               key={index}
               src={image}
               alt="미리보기"

@@ -7,6 +7,7 @@ import { useInfiniteQuery } from 'react-query'
 import { CommentApiType, CommentType } from '@/interface'
 import useIntersectionObserver from '@/hooks/useIntersectionObserver'
 import { Loader } from '../Loader'
+import Image from 'next/image'
 
 import dayjs from 'dayjs'
 import 'dayjs/locale/ko'
@@ -108,7 +109,7 @@ export default function CommentListModal({
                             className="flex flex-col gap-2"
                           >
                             <div className="flex gap-2 items-center">
-                              <img
+                              <Image
                                 src={
                                   comment?.user?.image ||
                                   '/images/user-icon.png'

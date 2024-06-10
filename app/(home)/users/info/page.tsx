@@ -6,6 +6,7 @@ import axios from 'axios'
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useQuery } from 'react-query'
+import Image from 'next/image'
 
 export default function UserInfoPage() {
   const router = useRouter()
@@ -43,7 +44,7 @@ export default function UserInfoPage() {
         </div>
         <div className="flex flex-col gap-2 border-b-gray-200 border-b py-4">
           <h1 className="font-semibold">이미지</h1>
-          <img
+          <Image
             src={user?.image || '/images/user-icon.png'}
             width={50}
             height={50}

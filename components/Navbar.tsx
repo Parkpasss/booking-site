@@ -18,6 +18,7 @@ import { SearchFilter } from './Filter'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { detailFilterState, filterState } from '@/atom'
 import { signOut, useSession } from 'next-auth/react'
+import Image from 'next/image'
 import { url } from 'inspector'
 
 const LOGOUT_USER_MENU = [
@@ -212,7 +213,7 @@ export default function Navbar() {
         >
           <AiOutlineMenu />
           {status === 'authenticated' && session?.user?.image ? (
-            <img
+            <Image
               src={session?.user?.image}
               alt="profile img"
               className="rounded-full w-4 h-4 my-auto"

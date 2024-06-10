@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useState, useEffect } from 'react'
 import { UserType } from '@/interface'
 import axios from 'axios'
@@ -94,7 +92,7 @@ export default function UserEditPage() {
                   value={name}
                   type="text"
                   name="name"
-                  id="name"
+                  id="name" // id 속성 추가
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-lime-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -113,7 +111,7 @@ export default function UserEditPage() {
                   value={phone}
                   onChange={onChange}
                   name="phone"
-                  id="phone"
+                  id="phone" // id 속성 추가
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-lime-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -153,7 +151,7 @@ export default function UserEditPage() {
                   value={address}
                   onChange={onChange}
                   name="address"
-                  id="address"
+                  id="address" // id 속성 추가
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-lime-600 sm:text-sm sm:leading-6"
                 />
               </div>

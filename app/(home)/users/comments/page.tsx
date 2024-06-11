@@ -8,7 +8,6 @@ import { useSession } from 'next-auth/react'
 import React, { useEffect, useRef } from 'react'
 import { useInfiniteQuery } from 'react-query'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ko'
 import { BiChevronRight } from 'react-icons/bi'
@@ -69,7 +68,7 @@ export default function UserComment() {
             {page.data.map((comment: CommentType) => (
               <div key={comment?.id} className="flex flex-col gap-2">
                 <div className="flex gap-2 items-center">
-                  <Image
+                  <img
                     src={comment?.user?.image || '/images/user-icon.png'}
                     alt="profile img"
                     width={50}

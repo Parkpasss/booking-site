@@ -5,7 +5,6 @@ import { BookingType } from '@/interface'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import { useSession } from 'next-auth/react'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { BiChevronRight } from 'react-icons/bi'
@@ -60,7 +59,7 @@ export default function BookingsPage() {
                   </h1>
                   <div className="flex gap-4 items-center w-full justify-between">
                     <div className="flex items-center gap-4">
-                      <Image
+                      <img
                         className="rounded-md"
                         src={booking?.room?.images?.[0] || '/images/logo.png'}
                         width={80}

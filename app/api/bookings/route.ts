@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server'
-
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../auth/[...nextauth]/route'
-
 import prisma from '@/db'
-
 interface BookingProps {
   roomId: string
   checkIn: string
@@ -25,7 +22,6 @@ export async function GET(req: Request) {
   const page = searchParams.get('page') as string
   const limit = searchParams.get('limit') as string
   const userId = searchParams.get('userId') as string
-
   if (id) {
     const booking = await prisma.booking.findFirst({
       where: {
@@ -36,7 +32,6 @@ export async function GET(req: Request) {
         room: true,
       },
     })
-
     return NextResponse.json(booking, {
       status: 200,
     })
@@ -59,7 +54,6 @@ export async function GET(req: Request) {
         room: true,
       },
     })
-
     return NextResponse.json(
       {
         page: parseInt(page),
@@ -71,11 +65,9 @@ export async function GET(req: Request) {
     )
   }
 }
-
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
   const formData = await req.json()
-
   const {
     roomId,
     checkIn,
@@ -84,7 +76,6 @@ export async function POST(req: Request) {
     totalAmount,
     totalDays,
   }: BookingProps = formData
-
   if (!session?.user) {
     return NextResponse.json(
       { error: 'unauthorized user' },
@@ -93,7 +84,6 @@ export async function POST(req: Request) {
       },
     )
   }
-
   const booking = await prisma.booking.create({
     data: {
       roomId: parseInt(roomId),
@@ -106,7 +96,6 @@ export async function POST(req: Request) {
       status: 'SUCCESS',
     },
   })
-
   return NextResponse.json(booking, {
     status: 200,
   })

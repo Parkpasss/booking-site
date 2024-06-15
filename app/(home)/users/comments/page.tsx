@@ -1,16 +1,14 @@
-'use client'
-
+import React, { useEffect, useRef } from 'react'
 import { Loader } from '@/components/Loader'
 import useIntersectionObserver from '@/hooks/useIntersectionObserver'
 import { CommentType } from '@/interface'
 import axios from 'axios'
 import { useSession } from 'next-auth/react'
-import React, { useEffect, useRef } from 'react'
-import { useInfiniteQuery } from 'react-query'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ko'
 import { BiChevronRight } from 'react-icons/bi'
+import { useInfiniteQuery } from 'react-query'
 
 export default function UserComment() {
   const router = useRouter()
@@ -20,7 +18,7 @@ export default function UserComment() {
 
   const { data: session } = useSession()
 
-  const fetchComments = async ({ pageParam = 1 }) => {
+  const fetchComments = async ({ pageParam = 1 }: { pageParam?: number }) => {
     const { data } = await axios(`/api/comments?my=true&page=${pageParam}`, {
       params: {
         limit: 12,
@@ -35,11 +33,11 @@ export default function UserComment() {
     isFetching,
     hasNextPage,
     fetchNextPage,
-  } = useInfiniteQuery(
+  } = useInfiniteQuery<{ data: CommentType[]; page: number }>(
     `comments-infinite-user-${session?.user.id}`,
     fetchComments,
     {
-      getNextPageParam: (lastPage: any) =>
+      getNextPageParam: (lastPage) =>
         lastPage.data?.length > 0 ? lastPage.page + 1 : undefined,
     },
   )
@@ -52,7 +50,13 @@ export default function UserComment() {
         fetchNextPage()
       }, 500)
     }
-  }, [fetchNextPage, isPageEnd, hasNextPage])
+
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId)
+      }
+    }
+  }, [fetchNextPage, hasNextPage, isPageEnd])
 
   return (
     <>
@@ -80,7 +84,8 @@ export default function UserComment() {
                       {comment?.user?.name || '-'}
                     </h1>
                     <div className="text-gray-500 text-xs">
-                      {dayjs(comment?.createdAt).format('YYYY-MM-DD HH:MM:ss')}
+                      {dayjs(comment?.createdAt).format('YYYY-MM-DD HH:mm:ss')}{' '}
+                      {/* 날짜 포맷 수정 */}
                     </div>
                   </div>
                 </div>
@@ -97,7 +102,7 @@ export default function UserComment() {
           </React.Fragment>
         ))}
       </div>
-      {(isFetching || hasNextPage) && <Loader />}
+      {(isFetching || hasNextPage) && <Loader />} {/* 로딩 상태 처리 */}
       <div className="w-full touch-none h-10 mb-10" ref={ref} />
     </>
   )

@@ -61,10 +61,10 @@ export default function UserEditPage() {
 
   useEffect(() => {
     if (user && isSuccess) {
-      setName(user?.name || '')
-      setEmail(user?.email || '')
-      setAddress(user?.address || '')
-      setPhone(user?.phone || '')
+      setName(user.name || '')
+      setEmail(user.email || '')
+      setAddress(user.address || '')
+      setPhone(user.phone || '')
     }
   }, [user, isSuccess])
 
@@ -92,7 +92,7 @@ export default function UserEditPage() {
                   value={name}
                   type="text"
                   name="name"
-                  id="name" // id 속성 추가
+                  id="name"
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-lime-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -111,7 +111,7 @@ export default function UserEditPage() {
                   value={phone}
                   onChange={onChange}
                   name="phone"
-                  id="phone" // id 속성 추가
+                  id="phone"
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-lime-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -131,13 +131,16 @@ export default function UserEditPage() {
                   onChange={onChange}
                   name="email"
                   type="email"
-                  readOnly
+                  readOnly // readOnly 속성 추가
                   autoComplete="email"
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-lime-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
+
+            {/* 사용자 ID를 hidden input으로 추가 */}
             <input name="id" value={user.id} className="hidden" readOnly />
+
             <div className="col-span-full">
               <label
                 htmlFor="address"
@@ -151,7 +154,7 @@ export default function UserEditPage() {
                   value={address}
                   onChange={onChange}
                   name="address"
-                  id="address" // id 속성 추가
+                  id="address"
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-lime-600 sm:text-sm sm:leading-6"
                 />
               </div>

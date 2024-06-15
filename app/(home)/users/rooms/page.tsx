@@ -7,11 +7,10 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import React, { useEffect } from 'react'
-import { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useInfiniteQuery } from 'react-query'
 import { storage } from '@/utils/firebaseApp'
-import { ref, getDownloadURL, deleteObject } from 'firebase/storage'
+import { ref, deleteObject } from 'firebase/storage'
 import { toast } from 'react-hot-toast'
 import { useRecoilValue } from 'recoil'
 import { searchState } from '@/atom'
@@ -23,16 +22,12 @@ export default function UserRooms() {
   const { data: session } = useSession()
   const searchStateValue = useRecoilValue(searchState)
 
-  const searchParams = {
-    q: searchStateValue.q,
-  }
-
   const fetchMyRooms = async ({ pageParam = 1 }) => {
     const { data } = await axios('/api/rooms?my=true&page=' + pageParam, {
       params: {
         limit: 12,
         page: pageParam,
-        ...searchParams,
+        q: searchStateValue.q,
       },
     })
 
@@ -48,7 +43,7 @@ export default function UserRooms() {
     fetchNextPage,
     refetch,
   } = useInfiniteQuery(
-    [`rooms-user-${session?.user.id}`, searchParams],
+    [`rooms-user-${session?.user.id}`, searchStateValue.q],
     fetchMyRooms,
     {
       getNextPageParam: (lastPage) =>
@@ -58,16 +53,17 @@ export default function UserRooms() {
 
   async function deleteImages(imageKeys: string[] | null) {
     if (imageKeys) {
-      imageKeys.forEach((key) => {
-        const imageRef = ref(storage, `${session?.user.id}/${key}`)
-        deleteObject(imageRef)
-          .then(() => {
+      await Promise.all(
+        imageKeys.map(async (key) => {
+          const imageRef = ref(storage, `${session?.user.id}/${key}`)
+          try {
+            await deleteObject(imageRef)
             console.log('File Deleted: ', key)
-          })
-          .catch((error) => {
-            console.log(error)
-          })
-      })
+          } catch (error) {
+            console.error(error)
+          }
+        }),
+      )
     }
     return imageKeys
   }
@@ -76,17 +72,20 @@ export default function UserRooms() {
     const confirm = window.confirm('해당 숙소를 삭제하시겠습니까?')
 
     if (confirm && data) {
-      //스토리지 이미지 지우기
-      await deleteImages(data.imageKeys || null)
-      const result = await axios.delete(`/api/rooms?id=${data.id}`)
+      try {
+        await deleteImages(data.imageKeys || null)
+        const result = await axios.delete(`/api/rooms?id=${data.id}`)
 
-      if (result.status === 200) {
-        toast.success('숙소를 삭제했습니다.')
-        refetch()
-      } else {
-        toast.error('데이터 삭제 중 문제가 생겼습니다.')
+        if (result.status === 200) {
+          toast.success('숙소를 삭제했습니다.')
+          refetch()
+        } else {
+          toast.error('데이터 삭제 중 문제가 생겼습니다.')
+        }
+      } catch (error) {
+        console.error('삭제 중 에러 발생:', error)
+        toast.error('다시 시도해주세요')
       }
-      toast.error('다시 시도해주세요')
     }
   }
 
@@ -98,11 +97,11 @@ export default function UserRooms() {
         fetchNextPage()
       }, 500)
     }
-  }, [fetchNextPage, hasNextPage, isPageEnd])
 
-  if (!!isError) {
-    throw new Error('room API fetching error')
-  }
+    return () => {
+      if (timerId) clearTimeout(timerId)
+    }
+  }, [fetchNextPage, hasNextPage, isPageEnd])
 
   return (
     <div className="mt-10 mb-40 max-w-7xl mx-auto overflow-auto px-8">

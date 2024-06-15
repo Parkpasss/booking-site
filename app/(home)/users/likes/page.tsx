@@ -16,7 +16,7 @@ export default function UserLikes() {
   const ref = useRef<HTMLDivElement | null>(null)
   const pageRef = useIntersectionObserver(ref, {})
   const isPageEnd = !!pageRef?.isIntersecting
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
 
   const fetchLikes = async ({ pageParam = 1 }) => {
     const { data } = await axios('/api/likes?page=' + pageParam, {
@@ -40,11 +40,8 @@ export default function UserLikes() {
   } = useInfiniteQuery(`likes-user-${session?.user.id}`, fetchLikes, {
     getNextPageParam: (lastPage, pages) =>
       lastPage?.data?.length > 0 ? lastPage.page + 1 : undefined,
+    enabled: status === 'authenticated', // 세션이 인증된 상태일 때만 쿼리 실행
   })
-
-  if (isError) {
-    throw new Error('Like API Fetching Error')
-  }
 
   useEffect(() => {
     let timerId: NodeJS.Timeout | undefined
@@ -53,6 +50,10 @@ export default function UserLikes() {
       timerId = setTimeout(() => {
         fetchNextPage()
       }, 500)
+    }
+
+    return () => {
+      if (timerId) clearTimeout(timerId)
     }
   }, [fetchNextPage, hasNextPage, isPageEnd])
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
 import { signIn, useSession } from 'next-auth/react'
 import { FcGoogle } from 'react-icons/fc'
 import { SiNaver } from 'react-icons/si'
@@ -11,43 +11,23 @@ import toast from 'react-hot-toast'
 
 export default function SignInPage() {
   const router = useRouter()
-  const { status } = useSession()
-
-  console.log(status)
-
-  const handleClickGoogle = () => {
-    try {
-      signIn('google', { callbackUrl: '/' })
-    } catch (e) {
-      console.log(e)
-      toast.error('다시 시도해주세요')
-    }
-  }
-
-  const handleClickNaver = () => {
-    try {
-      signIn('naver', { callbackUrl: '/' })
-    } catch (e) {
-      console.log(e)
-      toast.error('다시 시도해주세요')
-    }
-  }
-
-  const handleClickKakao = () => {
-    try {
-      signIn('kakao', { callbackUrl: '/' })
-    } catch (e) {
-      console.log(e)
-      toast.error('다시 시도해주세요')
-    }
-  }
+  const { data: session, status } = useSession()
 
   useEffect(() => {
     if (status === 'authenticated') {
-      toast.error('접근할 수 없습니다.')
+      toast.success('로그인되었습니다.')
       router.replace('/')
     }
   }, [router, status])
+
+  const handleSignIn = async (provider: string) => {
+    try {
+      await signIn(provider, { callbackUrl: '/' })
+    } catch (error) {
+      console.error(`로그인 시 오류 발생: ${error}`)
+      toast.error('로그인 중 문제가 발생했습니다.')
+    }
+  }
 
   return (
     <div className="max-w-xl mx-auto pt-10 pb-24">
@@ -66,24 +46,24 @@ export default function SignInPage() {
       <div className="flex flex-col gap-5 mt-16">
         <button
           type="button"
-          onClick={handleClickGoogle}
-          className="relative border border-gray-700 rounded-md py-3 text-sm hover:bg-black/5 text-center font-semibold"
+          onClick={() => handleSignIn('google')}
+          className="relative border border-gray-700 rounded-md py-3 text-sm hover:bg-black/5 text-center font-semibold flex items-center justify-center"
         >
           <FcGoogle className="absolute left-5 text-xl my-auto inset-y-0" />
           구글로 로그인하기
         </button>
         <button
           type="button"
-          onClick={handleClickNaver}
-          className="relative border border-gray-700 rounded-md py-3 text-sm hover:bg-black/5 text-center font-semibold"
+          onClick={() => handleSignIn('naver')}
+          className="relative border border-gray-700 rounded-md py-3 text-sm hover:bg-black/5 text-center font-semibold flex items-center justify-center"
         >
           <SiNaver className="absolute left-6 text-green-400 my-auto inset-y-0" />
           네이버로 로그인하기
         </button>
         <button
           type="button"
-          onClick={handleClickKakao}
-          className="relative border border-gray-700 rounded-md py-3 text-sm hover:bg-black/5 text-center font-semibold"
+          onClick={() => handleSignIn('kakao')}
+          className="relative border border-gray-700 rounded-md py-3 text-sm hover:bg-black/5 text-center font-semibold flex items-center justify-center"
         >
           <RiKakaoTalkFill className="absolute left-5 text-yellow-950 text-xl my-auto inset-y-0" />
           카카오로 로그인하기

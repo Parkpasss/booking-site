@@ -1,17 +1,12 @@
-'use client'
 import React, { useEffect, useRef } from 'react'
-
 import CategoryList from '@/components/CategoryList'
 import { GridLayout, RoomItem } from '@/components/RoomList'
 import { useInfiniteQuery } from 'react-query'
 import { useRouter } from 'next/navigation'
-
 import axios from 'axios'
-
 import { RoomType } from '@/interface'
 import { Loader, LoaderGrid } from '@/components/Loader'
 import useIntersectionObserver from '@/hooks/useIntersectionObserver'
-
 import { MapButton } from '@/components/Map'
 import { useRecoilValue } from 'recoil'
 import { filterState } from '@/atom'
@@ -24,19 +19,19 @@ export default function Home() {
   const isPageEnd = !!pageRef?.isIntersecting
 
   const filterParams = {
-    loaction: filterValue.location,
+    location: filterValue.location, // 오타 수정: loaction -> location
     category: filterValue.category,
   }
 
-  const fetchRooms = async ({ pageParam = 1 }) => {
-    const { data } = await axios('/api/rooms?page=' + pageParam, {
+  const fetchRooms = async ({ pageParam = 1 }: { pageParam?: number }) => {
+    // pageParam에 대한 타입 정의 추가
+    const { data } = await axios('/api/rooms', {
       params: {
         limit: 12,
         page: pageParam,
         ...filterParams,
       },
     })
-
     return data
   }
 
@@ -60,12 +55,18 @@ export default function Home() {
   useEffect(() => {
     let timerId: NodeJS.Timeout | undefined
 
-    if (isPageEnd && hasNextPage) {
+    if (isPageEnd && hasNextPage && !isFetchingNextPage) {
       timerId = setTimeout(() => {
         fetchNextPage()
       }, 500)
     }
-  }, [fetchNextPage, hasNextPage, isPageEnd])
+
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId)
+      }
+    }
+  }, [fetchNextPage, hasNextPage, isPageEnd, isFetchingNextPage])
 
   return (
     <>
